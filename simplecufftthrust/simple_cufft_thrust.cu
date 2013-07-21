@@ -146,9 +146,21 @@ int main(void) {
 //	#ifdef DOUBLE_PRECISION
 //	#else
 //	#endif
+	#ifdef DOUBLE_PRECISION
+	cufftHandle plan_z2d;
+	CUFFT_SAFE_CALL(cufftPlan1d(&plan_z2d,N,CUFFT_Z2D,1));
+	#else
+	cufftHandle plan_c2r;
+	CUFFT_SAFE_CALL(cufftPlan1d(&plan_c2r,N,CUFFT_C2R,1));
+	#endif
 
 // TODO: 
 // Declare/aloque un container de Thrust para guardar la antitransformada, y el raw_pointer para pasar a CUFFT
+	thrust::device_vector<REAL> D_AntiTransformed;
+
+	// toma el raw_pointer del array de output, para pasarselo a CUFFT luego
+	REAL *d_Anti = thrust::raw_pointer_cast(&D_AntiTransformed[0]); 
+
 
 // TODO:
 // Ejecute los planes cuFFT de la antitransformada (contemple los casos double y float)
@@ -156,9 +168,20 @@ int main(void) {
 //	#else
 //	#endif
 
+	#ifdef DOUBLE_PRECISION
+	CUFFT_SAFE_CALL(cufftExecZ2D(plan_z2d, d_output, d_Anti));
+	#else
+	CUFFT_SAFE_CALL(cufftExecC2R(plan_c2r, d_output, d_Anti));
+	#endif
+
+
 // TODO: 
 // Declare/aloque dos containers de Thrust: uno para guardar la antitransformada, y otro para el input original, en el host
 // y copie los respectivos contenidos del device al host
+
+	thrust::host_vector<REAL> Original_input=D_input;
+	thrust::host_vector<REAL> AntiTransformed_output=d_Anti;
+
 
 // TODO:
 // Imprima en un file el input original y la antitransformada de la transformada, para comparar
