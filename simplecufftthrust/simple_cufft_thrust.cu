@@ -156,7 +156,7 @@ int main(void) {
 
 // TODO: 
 // Declare/aloque un container de Thrust para guardar la antitransformada, y el raw_pointer para pasar a CUFFT
-	thrust::device_vector<REAL> D_AntiTransformed;
+	thrust::device_vector<REAL> D_AntiTransformed(N);
 
 	// toma el raw_pointer del array de output, para pasarselo a CUFFT luego
 	REAL *d_Anti = thrust::raw_pointer_cast(&D_AntiTransformed[0]); 
@@ -186,6 +186,10 @@ int main(void) {
 // TODO:
 // Imprima en un file el input original y la antitransformada de la transformada, para comparar
 #ifdef IMPRIMIR
+	ofstream transformada_out("comparativa.dat");
+	for(int j = 0 ; j < Ncomp ; j++){
+		transformada_out << Original_input[j] << " " << AntiTransformed_output[j] << endl;
+	}
 #endif
 	return 0;
 }
