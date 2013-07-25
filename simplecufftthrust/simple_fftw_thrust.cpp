@@ -104,7 +104,39 @@ int main(void) {
 	return 0;
 #endif
 
+	thrust::host_vector<REAL> D_reinput(N);
+
+	REAL *d_reinput = thrust::raw_pointer_cast(&D_reinput[0]);
+	fftw_plan  plan_z2d = fftw_plan_dft_c2r_1d(N,  reinterpret_cast<fftw_complex*>(d_output), d_reinput, FFTW_MEASURE);
+
+	t.restart();
+
+	//Transforma Fourier ejecutando el plan
+	for(int i=0;i<50;i++) fftw_execute(plan_z2d);
+
+	t_elapsed=t.elapsed();
+	// ---- Stop ---- 
+
+	// Imprime la transformada 
+	cout << "# Tamanio del array = " << N << endl;
+	cout << "# Tiempo de CPU " << 1e3*t_elapsed << " miliseconds" << endl;
+
+
+
+
+#ifdef IMPRIMIR
+	ofstream comparativa_out("comparativa_fftw.dat");
+	for(int j = 0 ; j < Ncomp ; j++){
+		REAL r = D_input[j];
+		REAL ro = D_reinput[j];
+		comparativa_out << r << " " << ro << endl;
+	}
+	return 0;
+#endif
+
+
 	fftw_destroy_plan(plan_d2z);
+	fftw_destroy_plan(plan_z2d);
 #ifdef FFTWTHREADS
 	fftw_cleanup_threads();
 #endif

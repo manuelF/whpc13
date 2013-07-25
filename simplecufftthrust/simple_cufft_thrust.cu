@@ -135,6 +135,7 @@ int main(void) {
 	for(int j = 0 ; j < Ncomp ; j++){
 		transformada_out << COMPLEX(H_output[j]).x << " " << COMPLEX(H_output[j]).y << endl;
 	}
+    transformada_out.close();
 #endif
 
 // TODO: Verifique que el resultado sea correcto, por ejemeplo, usando seniales cuya transformada conoce analiticamente 
@@ -186,10 +187,19 @@ int main(void) {
 // TODO:
 // Imprima en un file el input original y la antitransformada de la transformada, para comparar
 #ifdef IMPRIMIR
-	ofstream transformada_out("comparativa.dat");
-	for(int j = 0 ; j < Ncomp ; j++){
-		transformada_out << Original_input[j] << " " << AntiTransformed_output[j] << endl;
+	ofstream comparativa_out("comparativa.dat");
+	for(int j = 0 ; j < N ; j++){
+		comparativa_out << Original_input[j] << "\t " << AntiTransformed_output[j] << endl;
 	}
+    comparativa_out.close();
 #endif
+	#ifdef DOUBLE_PRECISION
+    cufftDestroy(plan_d2z);
+    cufftDestroy(plan_z2d);
+
+    #else
+    cufftDestroy(plan_r2c);
+    cufftDestroy(plan_c2r);
+    #endif
 	return 0;
 }

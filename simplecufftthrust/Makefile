@@ -6,7 +6,7 @@ INCLUDES += -I$(CUDA_INSTALL_PATH)/include -I./include/ -I../common -I/opt/fftw/
 
 # Parameters
 TAMANIO			= 4194304
-PARAMETROS		= -DTAMANIO=$(TAMANIO) #-DIMPRIMIR 
+PARAMETROS		= -DTAMANIO=$(TAMANIO) -DIMPRIMIR 
 
 # Flags
 LIBS                    = -L$(CUDA_LIB_PATH)
