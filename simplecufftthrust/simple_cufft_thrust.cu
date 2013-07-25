@@ -180,7 +180,7 @@ int main(void) {
 // y copie los respectivos contenidos del device al host
 
 	thrust::host_vector<REAL> Original_input=D_input;
-	thrust::host_vector<REAL> AntiTransformed_output=d_Anti;
+	thrust::host_vector<REAL> AntiTransformed_output=D_AntiTransformed;
 
 
 // TODO:
