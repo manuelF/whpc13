@@ -1,0 +1,73 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[spanish]{babel}
+%\usepackage{a4wide}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{makeidx}
+\usepackage{float}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{caratula}
+\usepackage{pdfpages}
+
+\usepackage{listings}\usepackage{color}
+\usepackage{textcomp}\definecolor{listinggray}{gray}{0.9}
+
+\definecolor{lbcolor}{rgb}{0.9,0.9,0.9}
+\usepackage{a4wide}
+
+\lstset{
+      language=C++,
+      basicstyle=\small\sffamily,
+      columns=fullflexible,
+      upquote=true,
+      extendedchars=true,
+      texcl=true,
+      mathescape=true,
+      showspaces=false
+                }
+
+
+
+\makeindex
+
+\begin{document}
+
+\index{Caratula}
+%Estos son los parametros para la caratula
+\materia{WHPC13}
+\submateria{Trabajo final}
+\titulo{T\'ecnicas de paralelismo y HPC}
+\fecha{26 de Julio de 2013}
+\integrante{Ferreria, Manuel}{}{m.ferreria@gmail.com}
+\resumen{Estudio de t\'ecnicas de paralelismo con varias herramientas y tenicas en CPU y GPU
+}
+
+\maketitle
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+\index{Ejercicio1}
+\input{ej1.tex}
+
+\pagebreak
+
+
+\index{Ejercicio2}
+\input{ej2.tex}
+
+\pagebreak
+
+
+\index{Ejercicio3}
+%\input{ej3.tex}
+
+\pagebreak
+
+
+\end{document}
