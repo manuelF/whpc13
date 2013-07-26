@@ -1,23 +1,40 @@
-\section{Ejercicio 1}
+\section{Ejercicio 2}
 
-El ejercio 1 consiste en realizar un producto vectorial sencillo, empleando distintos m\'etodos.
-Se utiliz\'o la libreria thrust para las versiones en C++ de CPU y de GPU, y se uso PyCUDA para
-la version en Python.
+El ejercio 2 consiste en realizar con CUFFT y FFFTW una FFT de real a complejos y la inversa,
+y comprobar que ambas son inversas entre si (es decir, devuelven los valores originales).
+Se utilizaron la libreria Thrust y CUFFT para las versiones en C++ de CPU y de GPU.
 
-La soluci\'on para la libreria thrust es utilizar la funci\'on transform, que toma varios parametros
-de entrada, donde se definen los operandos, el lugar de destino y el operador. En nuestro caso,
-se aplic\'a transform de la siguiente manera:
+El ejercicio planteando incluia una funcion $f$ que es aplicada a un arreglo en la memoria de la GPU que contiene
+una secuencia de $N$ numeros, fijado $N=1048576=2^{20}$. Este numero es bueno porque al ser m\'ultiplo de 2,
+CUFFT reserva una cantidad exacta de m\'emoria, y no tiene que paddear ni redondear, ayudando a la performance 
+\'optima de las funciones.
 
-\texttt{
-    thrust::transform(D1.begin(), D1.end(), D2.begin(), D3.begin(),
-                       thrust::multiplies<float>());
-}
+El c\'odigo ya escrito en el enunciado realizaba una FFT de real a complejos a un arreglo del 0 a N al que se
+le aplicaba una funci\'on $f$. La tarea que realizamos nosotros fue la de obtener la inversa de este valor.
+Para eso, aplicamos las funciones definidas en la API de CUFFT, pero que deshagan las transformaciones.
 
-Esto se define como: Tomar los datos de D1, de comienzo a fin, combinarlo con el dato de D2 al aplicarle la funci\'on 
-de \texttt{thrust::multiplies<float>()} y dejarlo en D3. Una ventaja de thrust es que es totalmente 
-portable entre CPU y GPU. Otra ventaja es que es muy idiomatico de C++, no hay ninguna construcci\'on muy rara
-que no se encastre en el lenguaje. 
+Es decir, si la ida fue armada como 
+\begin{itemize}
+    \item Armar plan R2C para N elementos
+    \item Disponer de un vector en la placa/en memoria para N/2+1 elementos para guardar resultado
+    \item Correr el plan R2C con CUFFT/FFTW
+\end{itemize}
 
+La vuelta se va a armar como
+
+\begin{itemize}
+    \item Armar plan C2R para N elementos
+    \item Disponer de un vector en la placa/en memoria para N elementos para guardar resultado
+    \item Correr el plan C2R con CUFFT/FFTW
+\end{itemize}
+
+
+El detalle m\\as importante de esto fue darnos cuenta como recuperar los valores originales. Parece que es trivial
+ya que vamos y volvemos con las ejecuciones de los planes, pero hay un comentario corto que esta en el manual de CUDA y de 
+FFTW. Este dice que FFTW / CUFFT no normalizan, por lo que eso lo tiene que hacer uno. Es decir, cuando imprimimos
+los valores originales para comprobar la exactitud de la ida y vuelta de la FFT, tenemos que reescalar el valor
+final haciendo una division por la cantidad de elementos en el arreglo. Cuando nos percatamos de eso, fue trivial
+la comparacion entre el dato de input y el de output.
 
   \begin{figure}[H]
  \begin {center}
