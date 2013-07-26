@@ -35,6 +35,8 @@ using namespace std;
 #define N TAMANIO
 #endif
 
+#define ITS 2
+
 typedef double REAL;
 typedef complex<double> COMPLEX;
 
@@ -86,7 +88,7 @@ int main(void) {
 	t.restart();
 
 	//Transforma Fourier ejecutando el plan
-	for(int i=0;i<50;i++) fftw_execute(plan_d2z);
+	for(int i=0;i<ITS;i++) fftw_execute(plan_d2z);
 
 	double t_elapsed=t.elapsed();
 	// ---- Stop ---- 
@@ -96,12 +98,12 @@ int main(void) {
 	cout << "# Tiempo de CPU " << 1e3*t_elapsed << " miliseconds" << endl;
 
 #ifdef IMPRIMIR
-	ofstream transformada_out("transformada_fftw.dat");
+	/*ofstream transformada_out("transformada_fftw.dat");
 	for(int j = 0 ; j < Ncomp ; j++){
 		COMPLEX Z = D_output[j];
 		transformada_out << Z.real() << " " << Z.imag() << endl;
 	}
-	return 0;
+    */
 #endif
 
 	thrust::host_vector<REAL> D_reinput(N);
@@ -112,7 +114,7 @@ int main(void) {
 	t.restart();
 
 	//Transforma Fourier ejecutando el plan
-	for(int i=0;i<50;i++) fftw_execute(plan_z2d);
+	for(int i=0;i<ITS;i++) fftw_execute(plan_z2d);
 
 	t_elapsed=t.elapsed();
 	// ---- Stop ---- 
@@ -126,12 +128,12 @@ int main(void) {
 
 #ifdef IMPRIMIR
 	ofstream comparativa_out("comparativa_fftw.dat");
-	for(int j = 0 ; j < Ncomp ; j++){
+	for(int j = 0 ; j < N ; j++){
 		REAL r = D_input[j];
 		REAL ro = D_reinput[j];
 		comparativa_out << r << " " << ro << endl;
 	}
-	return 0;
+    comparativa_out.close();
 #endif
 
 
@@ -141,5 +143,6 @@ int main(void) {
 	fftw_cleanup_threads();
 #endif
 	
+	return 0;
 }
 

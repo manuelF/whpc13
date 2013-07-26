@@ -124,6 +124,11 @@ int main(void) {
 	double t_elapsed=t.elapsed();
 	/* ---- Stop ---- */
 
+	#ifdef DOUBLE_PRECISION
+    cufftDestroy(plan_d2z);
+	#else
+    cufftDestroy(plan_r2c);
+	#endif
 	// declara un vector para copiar/guardar la transformada en el host:
 	thrust::host_vector<COMPLEX> H_output=D_output;
 
@@ -189,16 +194,13 @@ int main(void) {
 #ifdef IMPRIMIR
 	ofstream comparativa_out("comparativa.dat");
 	for(int j = 0 ; j < N ; j++){
-		comparativa_out << Original_input[j] << "\t " << AntiTransformed_output[j] << endl;
+		comparativa_out << Original_input[j] << "\t " << AntiTransformed_output[j]/((double)N) << endl;
 	}
     comparativa_out.close();
 #endif
 	#ifdef DOUBLE_PRECISION
-    cufftDestroy(plan_d2z);
     cufftDestroy(plan_z2d);
-
     #else
-    cufftDestroy(plan_r2c);
     cufftDestroy(plan_c2r);
     #endif
 	return 0;
