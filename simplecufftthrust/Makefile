@@ -6,7 +6,7 @@ INCLUDES += -I$(CUDA_INSTALL_PATH)/include -I./include/ -I../common -I/opt/fftw/
 
 # Parameters
 TAMANIO			= 4194304
-PARAMETROS		= -DTAMANIO=$(TAMANIO) #-DIMPRIMIR 
+PARAMETROS		= -DTAMANIO=$(TAMANIO) -DIMPRIMIR 
 
 # Flags
 LIBS                    = -L$(CUDA_LIB_PATH)
@@ -16,7 +16,7 @@ NVCC_FLAGS              = -O2 --use_fast_math
 FFTW_FLAGS		= -O2 -lfftw3 -lm -L/opt/fftw/3.3.3/lib 
 MULTIFFTW_FLAGS		= -O2 -fopenmp -lgomp -lfftw3_threads -lpthread -lfftw3 -lm -L/opt/fftw/3.3.3/lib -lrt -DOMP
 NVCC                    = $(CUDA_INSTALL_PATH)nvcc -arch=sm_20
-GCC			= g++
+GCC			= icpc
 LINKER			= $(NVCC)
 
 # Rules

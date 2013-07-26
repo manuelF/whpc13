@@ -8,6 +8,8 @@
 ### Environment setup
 . /etc/profile
 module load cuda/5.0
+module load mpi/mpich/3.0.4-intel
+module load libs/fftw/3.3.3 
 
 ### Run tasks
 srun cat /proc/cpuinfo > cpuinfo.dat
