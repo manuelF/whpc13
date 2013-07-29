@@ -326,33 +326,20 @@ int main(){
 			   REAL velocity = reduce(....)/L; //center of mass velocity
 			   REAL center_of_mass = reduce(....)/L; // center of mass position
 			*/
-
-			   REAL velocity = (reduce(           u.begin()+1,               u.end()-1,               0.0
-
-               )
-               +
-               reduce(
-               u_old.begin()+1,
-               u_old.end()-1,
-               0.0
-               )
-               )
-               /L; //center of mass velocity
-               
+                
                /* Velocidad = delta Posicion / delta tiempo
                   SUM ( U(n)-U(n-1) ) /  Dt
-                
-
                */
                
+			   REAL center_of_mass = reduce(u.begin()+1, u.end()-1, 0.0)/L; // center of mass position
 
-			   REAL center_of_mass = reduce(....)/L; // center of mass position
-	               /*Centro de masas = Promedio de fuerzas
-                  
+			   REAL velocity =  (( (L*center_of_mass) -   //Posiciones actuales
+                                reduce(u_old.begin()+1,u_old.end()-1,0.0) //Posiciones anteriores
+                                ) / L   //Obtenemos el Delta posicion promedio por punto
+                                ) /Dt;  //Obtenemos la velocidad
 
-
-               */
                
+	                  
 
 		/* TODO: 
 			   usando el algoritmo TRANSFORM_REDUCE, 
@@ -364,13 +351,14 @@ int main(){
 			   HINT:
 			   REAL roughness = transform_reduce(...,...,roughtor(center_of_mass),0.0,thrust::plus<REAL>());
 			*/
+			REAL roughness = transform_reduce(...,...,roughtor(center_of_mass),0.0,thrust::plus<REAL>());
 			timer_props_elapsed+=t.elapsed();
 	
 
 			/* TODO: descomentar para que imprima la velocidad media, centro de masa, y rugosidad 
 			   calculadas en los otros "TODOes", en el file "someprops.dat" */	
-			//propsout << velocity << " " << center_of_mass << " " << roughness << std::endl;
-			//propsout.flush();
+			propsout << velocity << " " << center_of_mass << " " << roughness << std::endl;
+			propsout.flush();
 			
 			/* TODO:
 			 Descomente -DPRINTCONFS en el Makefile, y recompile, para que imprima la posición 
