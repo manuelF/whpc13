@@ -187,9 +187,10 @@ struct fuerza
 // TODO: agregar -DFINITETEMPERATURE en el Makefile para agregar 
 // fluctuaciones termicas pero antes corregir el FIXME siguiente! 
 #ifdef FINITETEMPERATURE
-	// FIXME: Lo de abajo tiene un error grave!!. Corrijalo.
-	c[0] = tid; // COUNTER = {tid, GLOBAL SEED #2} 
+	
+    c[0] = uint32_t((int)u); // COUNTER = {tid, GLOBAL SEED #2} 
 	c[1] = SEED2; // para evitar correlaciones entre el ruido térmico y el desorden congelado...
+    k[0] = tid;
 	r = rng(c, k);
 	thermal_noise = noiseamp*box_muller(r);    			
 #else
@@ -351,7 +352,7 @@ int main(){
 			   HINT:
 			   REAL roughness = transform_reduce(...,...,roughtor(center_of_mass),0.0,thrust::plus<REAL>());
 			*/
-			REAL roughness = transform_reduce(...,...,roughtor(center_of_mass),0.0,thrust::plus<REAL>());
+			REAL roughness = transform_reduce( u_it0, u_it1 ,roughtor(center_of_mass),0.0,thrust::plus<REAL>());
 			timer_props_elapsed+=t.elapsed();
 	
 
