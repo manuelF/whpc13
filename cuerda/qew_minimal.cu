@@ -352,7 +352,7 @@ int main(){
 			   HINT:
 			   REAL roughness = transform_reduce(...,...,roughtor(center_of_mass),0.0,thrust::plus<REAL>());
 			*/
-			REAL roughness = transform_reduce( u_it0, u_it1 ,roughtor(center_of_mass),0.0,thrust::plus<REAL>());
+			REAL roughness = transform_reduce( u_it0, u_it1 ,roughtor(center_of_mass),0.0,thrust::plus<REAL>())/L;
 			timer_props_elapsed+=t.elapsed();
 	
 
