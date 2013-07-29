@@ -265,6 +265,7 @@ int main(){
 	// loop temporal
 	//functor_fuerza fuerza(0);
 
+	device_vector<REAL> u_old(L+2);
 	for(long n=0;n<TRUN;n++)
 	{
 		// Impone PBC en el "halo"		
@@ -300,6 +301,11 @@ int main(){
 		// u(X,n) += Ftot(X,n) Dt, X=0,...,L-1
 		// Mirar el functor "euler" mas arriba...
 		// Notar: no hace falta zip_iterator, ya que transform si soporta hasta dos secuencias de input
+        if(n%TPROP==0)
+        {
+            u_old=u;
+        }
+
 		t.restart();
 		transform(
 			u_it0,u_it1,Ftot_it0,u_it0, 
@@ -321,7 +327,34 @@ int main(){
 			   REAL center_of_mass = reduce(....)/L; // center of mass position
 			*/
 
-			/* TODO: 
+			   REAL velocity = (reduce(           u.begin()+1,               u.end()-1,               0.0
+
+               )
+               +
+               reduce(
+               u_old.begin()+1,
+               u_old.end()-1,
+               0.0
+               )
+               )
+               /L; //center of mass velocity
+               
+               /* Velocidad = delta Posicion / delta tiempo
+                  SUM ( U(n)-U(n-1) ) /  Dt
+                
+
+               */
+               
+
+			   REAL center_of_mass = reduce(....)/L; // center of mass position
+	               /*Centro de masas = Promedio de fuerzas
+                  
+
+
+               */
+               
+
+		/* TODO: 
 			   usando el algoritmo TRANSFORM_REDUCE, 
 			   [ http://thrust.github.io/doc/group__transformed__reductions.html#ga087a5af8cb83647590c75ee5e990ef66 ]
 			   el functor "roughtor" arriba definido, 
