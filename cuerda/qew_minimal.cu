@@ -188,7 +188,7 @@ struct fuerza
 // fluctuaciones termicas pero antes corregir el FIXME siguiente! 
 #ifdef FINITETEMPERATURE
 	
-    c[0] = uint32_t((int)u); // COUNTER = {tid, GLOBAL SEED #2} 
+    c[0] = uint32_t(tiempo); // COUNTER = {tid, GLOBAL SEED #2} 
 	c[1] = SEED2; // para evitar correlaciones entre el ruido térmico y el desorden congelado...
     k[0] = tid;
 	r = rng(c, k);
@@ -332,7 +332,7 @@ int main(){
                   SUM ( U(n)-U(n-1) ) /  Dt
                */
                
-			   REAL center_of_mass = reduce(u.begin()+1, u.end()-1, 0.0)/L; // center of mass position
+			   REAL center_of_mass = reduce(u_it0, u_it1, 0.0)/L; // center of mass position
 
 			   REAL velocity =  (( (L*center_of_mass) -   //Posiciones actuales
                                 reduce(u_old.begin()+1,u_old.end()-1,0.0) //Posiciones anteriores
