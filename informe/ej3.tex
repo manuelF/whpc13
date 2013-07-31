@@ -5,7 +5,7 @@ El ejercio 3 consiste en completar una fracci\'on de la simulaci\'on de los avan
 en interfaces de medios desordenados. Para eso se gener\'o un modelo basado en mec\'anica cl\'asica, usando
 \textit{splines} para trazar las curvas de las particulas y \textit{springs} para delimitar el frente.
 
-El c\'odigo fue hecho usando la librer\'ia \texttt{thrust} para poderlo correr en CPU y GPU indistintamente.
+El c\'odigo fue hecho usando la librer\'ia \texttt{Thrust} para poderlo correr en CPU y GPU indistintamente.
 Tambien se utiliz\'o un random number generator especial, basado en contadores, para no tener que almacenar las posiciones 
 hist\'oricas de cada particula. Esto hace manejable los tama\~nos de de mem\'oria de modo que entren en las placas
 aceleradoras GPGPU. 
@@ -39,7 +39,7 @@ de X para obtener el centro de masas. Esto se traduce en un c\'odigo de thrust d
 \texttt{ REAL center\_of\_mass = reduce(u\_it0, u\_it1, 0.0) / L;}\\
 Esto hace una suma de todos las posiciones en X de las particulas y las promedia al dividirlas por L (fuera de la placa).
 
-Para obtener la velocidad del centro de masas, deberiamos ver cuanto cambio su posici\'on con respecto del tiempo, $\Delta t$
+Para obtener la velocidad del centro de masas, deberiamos ver cuanto cambio su posici\'on con respecto del tiempo, $\Delta t$.
 Para eso, antes de la iteraci\'on de euler inmediata anterior al calculo de propiedades, nos guardamos todas las posiciones
 de las particulas (podria reducirse el uso de memoria haciendo un reduce ahi mismo).
 Luego el c\'odigo relevante es:\\
@@ -59,34 +59,40 @@ delta por punto, y luego lo dividimos otra vez por el delta tiempo para obtener 
 de un step de tiempo, es decir, la derivada de la posici\'on en funci\'on del tiempo, que es la velocidad del centro de masas.
 
 
- % \begin{figure}[H]
- % \begin {center}
- % \includegraphics[width=\hrwidth]{plots/ej1omp.png}
- % \end {center}
- % \caption{Runtime del ej1 en Thrust con OMP, en funcion de la cantidad de threads, para una longitud de vectores $L=10^8$}
- % \label{fig:ej1OMP}
- % \end{figure}
+ \begin{figure}[H]
+ \begin {center}
+ \includegraphics[width=\hrwidth]{plots/ej1omp.png}
+ \end {center}
+ \caption{Runtime del ej3 en Thrust con OMP, en funcion de la cantidad de threads, para 10k iteraciones temporales}
+ \label{fig:ej1OMP}
+ \end{figure}
 
-% \begin{table}
- %    \begin{tabular}{l|l}
- %       \textbf{M\'etodo} & \textbf{ Runtime [ms] }\\ \hline
- %   1 OMP Thread         & 200.598      \\
- %   2 OMP Thread          & 200.963      \\
- %   4 OMP Thread          & 199.766      \\
- %   8 OMP Thread  & 202.534      \\
- %   16 OMP Thread & 201.127      \\
- %       CUDA M2090 & 11.035 
- %   \end{tabular}
-%\end{table}
+ \begin{table} [H]
+    \begin{tabular}{l|l|l|l}
+        \textbf{M\'etodo} & \textbf{ Runtime Total [ms] }& \textbf{Tiempo fuerzas} & \textbf{Tiempo euler}\\ \hline
+        1 OMP Thread         & 15861.80      & 15240.20  & 577.91\\
+   2 OMP Thread          & 7971.23     & 7654.43 &309.73  \\
+   4 OMP Thread          & 4072.82     & 3888.24 & 162.07 \\
+   8 OMP Thread  & 2235.89     & 2130.46 & 111.05 \\
+   16 OMP Thread & 1249.57     & 1132.09 & 93.87 \\
+       CUDA M2090 & 473.18  & 290.505 & 176.06
+   \end{tabular}
+   
+\end{table}
 
 
+En el gr\'afico de la figura \ref{fig:ej3OMP} junto a la tabla correspondiente, podemos apreciar que este problema escala
+increiblemente bien. En efecto, como el calculo de casi todo es independiente, y solo se comparten pocos datos en un momento,
+el problema puede escalar casi linealmente. La placa nVidia, sin embargo, sigue siendo un orden de magnitud m\'as rapida que
+lo m\'aximo que podemos alcanzar usando un solo procesador Xeon en el servidor.
+Comparando en la tabla con la placa GPGPU, extrapolando, podriamos concluir que equivale a un procesador de mas de 32 threads. 
+Seria interesante probar este experimento en una Xeon Phi, a ver si realmente se podria comparar la performance de ambos dispositivos.
 
- Como se puede ver en el gr\'afico y la tabla de la figura \ref{fig:ej1OMP}, casi no varian los runtimes a pesar de tener
- muchos threads. Esto se debe a que el costo de generar y spawnear threads nuevos es tan alto que el procesador
- deberia hacer m\'as c\'alculo por core en vez de paralelizar m\'as el problema. Esto es un claro ejemplo
- de una tarea que es demasiado chica para threadear, e incluso con un problema relativamente grande de $10^8$ 
- elementos, no vale la pena paralelizarlo con CPU.
-
- Comparado contra la placa Nvidia con CUDA, podemos apreciar la diferencia de velocidad notablemente. Esto igual no toma
- en cuenta el tiempo de transferencia de memoria, por lo cual puede llegar a ser engañoso a veces el tiempo de runtime
- en las comparaciones CPU/GPU.
+Un detalle interesante surge de ver la discrepancia en porcentaje de tiempo invertidos en las distintas cuentas. Ac\'a se puede apreciar
+la potencia pura de la placa; el fragmento de codigo de fuerzas se acelera muchisimo. Esto se puede aplicar tanto por el hecho de
+que se realizan las cuentas totalmente paralelas en distintos threads y que ademas se aprovecha el fuerte de la placa que son
+las instrucciones sin condicionales. De haber algun if en ese codigo, por minusculo que sea, los valores de runtime serian bastante
+mas desfavorables. Sin embargo, en el calculo de paso de euler, es mucho peor la performance comparado contra incluso 4 threads OMP.
+Es de creer que esto puede ser porque en si son bastantes pocas cuentas, $2^16$ son relativamente pocos elementos sobre los cuales
+se tiene una baja intensidad aritmetica. Esto hace que se preste mejor la opcion vectorizada de calculos comparado contra la opcion 
+many threads de CUDA. 
