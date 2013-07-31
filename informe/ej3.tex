@@ -61,15 +61,15 @@ de un step de tiempo, es decir, la derivada de la posici\'on en funci\'on del ti
 
  \begin{figure}[H]
  \begin {center}
- \includegraphics[width=\hrwidth]{plots/ej1omp.png}
+ \includegraphics[width=\hrwidth]{plots/ej3omp.png}
  \end {center}
  \caption{Runtime del ej3 en Thrust con OMP, en funcion de la cantidad de threads, para 10k iteraciones temporales}
- \label{fig:ej1OMP}
+ \label{fig:ej3OMP}
  \end{figure}
 
  \begin{table} [H]
-    \begin{tabular}{l|l|l|l}
-        \textbf{M\'etodo} & \textbf{ Runtime Total [ms] }& \textbf{Tiempo fuerzas} & \textbf{Tiempo euler}\\ \hline
+    \begin{tabular}{l|r|r|r}
+        \textbf{M\'etodo} & \textbf{ Runtime Total [ms]}& \textbf{Tiempo fuerzas [ms]} & \textbf{Tiempo euler [ms]}\\ \hline
         1 OMP Thread         & 15861.80      & 15240.20  & 577.91\\
    2 OMP Thread          & 7971.23     & 7654.43 &309.73  \\
    4 OMP Thread          & 4072.82     & 3888.24 & 162.07 \\
@@ -82,17 +82,18 @@ de un step de tiempo, es decir, la derivada de la posici\'on en funci\'on del ti
 
 
 En el gr\'afico de la figura \ref{fig:ej3OMP} junto a la tabla correspondiente, podemos apreciar que este problema escala
-increiblemente bien. En efecto, como el calculo de casi todo es independiente, y solo se comparten pocos datos en un momento,
+increiblemente bien. En efecto, como el c\'alculo de casi todo es independiente, y solo se comparten pocos datos en un momento,
 el problema puede escalar casi linealmente. La placa nVidia, sin embargo, sigue siendo un orden de magnitud m\'as rapida que
 lo m\'aximo que podemos alcanzar usando un solo procesador Xeon en el servidor.
 Comparando en la tabla con la placa GPGPU, extrapolando, podriamos concluir que equivale a un procesador de mas de 32 threads. 
-Seria interesante probar este experimento en una Xeon Phi, a ver si realmente se podria comparar la performance de ambos dispositivos.
+Seria interesante probar este experimento en una Xeon Phi, a ver si realmente se puede comparar la performance de ambos dispositivos,
+como dicen los fabricantes.
 
 Un detalle interesante surge de ver la discrepancia en porcentaje de tiempo invertidos en las distintas cuentas. Ac\'a se puede apreciar
-la potencia pura de la placa; el fragmento de codigo de fuerzas se acelera muchisimo. Esto se puede aplicar tanto por el hecho de
+la potencia pura de la placa; el fragmento de codigo de fuerzas se acelera muchi\'simo. Esto se puede aplicar tanto por el hecho de
 que se realizan las cuentas totalmente paralelas en distintos threads y que ademas se aprovecha el fuerte de la placa que son
 las instrucciones sin condicionales. De haber algun if en ese codigo, por minusculo que sea, los valores de runtime serian bastante
-mas desfavorables. Sin embargo, en el calculo de paso de euler, es mucho peor la performance comparado contra incluso 4 threads OMP.
-Es de creer que esto puede ser porque en si son bastantes pocas cuentas, $2^16$ son relativamente pocos elementos sobre los cuales
-se tiene una baja intensidad aritmetica. Esto hace que se preste mejor la opcion vectorizada de calculos comparado contra la opcion 
+mas desfavorables. Sin embargo, en el c\'alculo de paso de euler, es mucho peor la performance comparado contra incluso 4 threads OMP.
+Es de creer que esto puede ser porque en si son bastantes pocas cuentas; $2^{16}$ elementos son relativamente pocos para tener 
+tan baja intensidad aritm\'etica. Esto hace que se preste mejor la opcion vectorizada de calculos comparado contra la opcio\'n 
 many threads de CUDA. 
