@@ -109,7 +109,7 @@ int main(void) {
 	thrust::host_vector<REAL> D_reinput(N);
 
 	REAL *d_reinput = thrust::raw_pointer_cast(&D_reinput[0]);
-	fftw_plan  plan_z2d = fftw_plan_dft_c2r_1d(N,  reinterpret_cast<fftw_complex*>(d_output), d_reinput, FFTW_MEASURE);
+	fftw_plan  plan_z2d = fftw_plan_dft_c2r_1d(N,  reinterpret_cast<fftw_complex*>(d_output), d_reinput, FFTW_MEASURE|FFTW_PRESERVE_INPUT);
 
 	t.restart();
 
