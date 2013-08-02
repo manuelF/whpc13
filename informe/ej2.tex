@@ -1,5 +1,5 @@
 \section{Ejercicio 2}
-
+\subsection{Descripcion}
 El ejercio 2 consiste en realizar con CUFFT y FFFTW una FFT de real a complejos y la inversa,
 y comprobar que ambas son inversas entre si (es decir, devuelven los valores originales).
 Se utilizaron la libreria Thrust y CUFFT para las versiones en C++ de CPU y de GPU.
@@ -8,6 +8,8 @@ El ejercicio planteando incluia una funcion $f$ que es aplicada a un arreglo en 
 una secuencia de $N$ numeros, fijado $N=1048576=2^{20}$. Este numero es bueno porque al ser m\'ultiplo de 2,
 CUFFT reserva una cantidad exacta de m\'emoria, y no tiene que paddear ni redondear, ayudando a la performance 
 \'optima de las funciones.
+
+\subsection{TODOs}
 
 El c\'odigo ya escrito en el enunciado realizaba una FFT de real a complejos a un arreglo del 0 a N al que se
 le aplicaba una funci\'on $f$. La tarea que realizamos nosotros fue la de obtener la inversa de este valor.
@@ -29,41 +31,42 @@ La vuelta se va a armar como
 \end{itemize}
 
 
-El detalle m\\as importante de esto fue darnos cuenta como recuperar los valores originales. Parece que es trivial
+El detalle m\'as importante de esto fue darnos cuenta como recuperar los valores originales. Parece que es trivial
 ya que vamos y volvemos con las ejecuciones de los planes, pero hay un comentario corto que esta en el manual de CUDA y de 
 FFTW. Este dice que FFTW / CUFFT no normalizan, por lo que eso lo tiene que hacer uno. Es decir, cuando imprimimos
 los valores originales para comprobar la exactitud de la ida y vuelta de la FFT, tenemos que reescalar el valor
 final haciendo una division por la cantidad de elementos en el arreglo. Cuando nos percatamos de eso, fue trivial
 la comparacion entre el dato de input y el de output.
 
+Un detalle tambien importante para poder comparar en el caso de FFTW fue darnos cuenta que el plan \texttt{C2R} 
+\textbf{no} preserva el input por default. Esto trajo dolores de cabeza a la hora de visualizar que los 
+datos esten de la manera correcta. Se resuelve agregando el flag \texttt{FFTW\_PRESERVE\_INPUT} a la creaci\'on
+del plan.
+
+\subsection{Resultados}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   \begin{figure}[H]
  \begin {center}
  \includegraphics[width=\hrwidth]{plots/ej1omp.png}
  \end {center}
- \caption{Runtime del ej1 en Thrust con OMP, en funcion de la cantidad de threads, para una longitud de vectores $L=10^8$}
+ \caption{Runtime del ej2 en Thrust con OMP, en funcion de la cantidad de threads, para una longitud de vectores $L=10^8$}
  \label{fig:ej1OMP}
  \end{figure}
 
 \begin{table}
-    \begin{tabular}{l|l}
-        \textbf{M\'etodo} & \textbf{ Runtime [ms] }\\ \hline
-    1 OMP Thread         & 200.598      \\
-    2 OMP Thread          & 200.963      \\
-    4 OMP Thread          & 199.766      \\
-    8 OMP Thread  & 202.534      \\
-    16 OMP Thread & 201.127      \\
-        CUDA M2090 & 11.035 
+    \begin{tabular}{l|r|r}
+        \textbf{M\'etodo} & \textbf{ Runtime Real 2 Complex [ms] } & \textbf{  Runtime Complex 2 Real [ms] } \\ \hline
+        1 OMP Thread         & 200.598     & \\
+        2 OMP Thread          & 200.963      &\\
+        4 OMP Thread          & 199.766      &\\
+        8 OMP Thread  & 202.534      &      \\
+        16 OMP Thread & 201.127      &  \\
+        CUDA M2090 & 11.035          &
     \end{tabular}
 \end{table}
 
-
-
- Como se puede ver en el gr\'afico y la tabla de la figura \ref{fig:ej1OMP}, casi no varian los runtimes a pesar de tener
- muchos threads. Esto se debe a que el costo de generar y spawnear threads nuevos es tan alto que el procesador
- deberia hacer m\'as c\'alculo por core en vez de paralelizar m\'as el problema. Esto es un claro ejemplo
- de una tarea que es demasiado chica para threadear, e incluso con un problema relativamente grande de $10^8$ 
- elementos, no vale la pena paralelizarlo con CPU.
-
- Comparado contra la placa Nvidia con CUDA, podemos apreciar la diferencia de velocidad notablemente. Esto igual no toma
- en cuenta el tiempo de transferencia de memoria, por lo cual puede llegar a ser engañoso a veces el tiempo de runtime
- en las comparaciones CPU/GPU.
+Los resultados muestran claramente que el calculo de FFT es un problema que paraleliza muy bien. En efecto,
+es de crucial interes esto porque este algoritmo aparece en muchisimas ramas de la ciencia. Podemos apreciar
+tambien que la libreria CUFFT es notablemente buena, siendo varias veces m\'as eficiente que las versiones
+de CPU. 

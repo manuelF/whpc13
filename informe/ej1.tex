@@ -1,5 +1,6 @@
 \section{Ejercicio 1}
 
+\subsection{Introducci\'on}
 El ejercio 1 consiste en realizar un producto vectorial sencillo, empleando distintos m\'etodos.
 Se utiliz\'o la libreria thrust para las versiones en C++ de CPU y de GPU, y se uso PyCUDA para
 la version en Python.
@@ -18,6 +19,8 @@ de \texttt{thrust::multiplies<float>()} y dejarlo en D3. Una ventaja de thrust e
 portable entre CPU y GPU. Otra ventaja es que es muy idiomatico de C++, no hay ninguna construcci\'on muy rara
 que no se encastre en el lenguaje. 
 
+
+\subsection{Resultados}
 \def \hrwidth {300pt}
 
 
@@ -30,7 +33,7 @@ que no se encastre en el lenguaje.
  \end{figure}
 
  \begin{table}[H]
-    \begin{tabular}{l l}
+    \begin{tabular}{l| r}
         \textbf{M\'etodo} & \textbf{ Runtime [ms] }\\ \hline
     1 OMP Thread         & 200.598      \\
     2 OMP Thread          & 200.963      \\
