@@ -1,0 +1,60 @@
+
+=== FFTW multiple threads ===
+# Threads = 1
+# Tamanio del array = 4194304
+# Tiempo de CPU 127.819 miliseconds
+# Tamanio del array = 4194304
+# Tiempo de CPU 133.486 miliseconds
+
+real	4m10.949s
+user	0m0.010s
+sys	0m0.006s
+
+
+=== FFTW multiple threads ===
+# Threads = 2
+# Tamanio del array = 4194304
+# Tiempo de CPU 86.7323 miliseconds
+# Tamanio del array = 4194304
+# Tiempo de CPU 103.775 miliseconds
+
+real	5m42.060s
+user	0m0.006s
+sys	0m0.011s
+
+
+=== FFTW multiple threads ===
+# Threads = 4
+# Tamanio del array = 4194304
+# Tiempo de CPU 72.405 miliseconds
+# Tamanio del array = 4194304
+# Tiempo de CPU 82.7086 miliseconds
+
+real	5m7.081s
+user	0m0.013s
+sys	0m0.004s
+
+
+=== FFTW multiple threads ===
+# Threads = 8
+# Tamanio del array = 4194304
+# Tiempo de CPU 71.0027 miliseconds
+# Tamanio del array = 4194304
+# Tiempo de CPU 76.5668 miliseconds
+
+real	4m34.971s
+user	0m0.008s
+sys	0m0.008s
+
+
+=== FFTW multiple threads ===
+# Threads = 16
+# Tamanio del array = 4194304
+# Tiempo de CPU 71.9253 miliseconds
+# Tamanio del array = 4194304
+# Tiempo de CPU 100.247 miliseconds
+
+real	4m7.201s
+user	0m0.012s
+sys	0m0.006s
+
