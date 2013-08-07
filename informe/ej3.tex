@@ -32,17 +32,14 @@ Esto se hacia duplicando el mecanismo usado anteriormente y cambiando el seed al
 
 
 El segundo \texttt{TODO} se referia al c\'alculo de dos propiedades de la interfaz, la velocidad y la posicion del centro de masas.
-Recordemos que la velocidad se calcula como $V = \frac{\Delta x}{\Delta t}$ y el centro de masas (dadas las hipotesis del problema)
-se calcula como $P = \frac{\Sigma_i P_i}{L}$. Para calcular el centro de masas, debemos obtener la posicion de cada uno de los
+Para calcular el centro de masas, debemos obtener la posicion de cada uno de los
 puntos y promediarla. Como el problema son $L$ puntos equiespaciados en la coordenada $y$, tomamos solamente los valores 
 de X para obtener el centro de masas. Esto se traduce en un c\'odigo de thrust de reduce asi: \\
 \texttt{ REAL center\_of\_mass = reduce(u\_it0, u\_it1, 0.0) / L;}\\
 Esto hace una suma de todos las posiciones en X de las particulas y las promedia al dividirlas por L (fuera de la placa).
 
-Para obtener la velocidad del centro de masas, deberiamos ver cuanto cambio su posici\'on con respecto del tiempo, $\Delta t$.
-Para eso, antes de la iteraci\'on de euler inmediata anterior al calculo de propiedades, nos guardamos todas las posiciones
-de las particulas (podria reducirse el uso de memoria haciendo un reduce ahi mismo).
-Luego el c\'odigo relevante es:\\
+Para obtener la velocidad del centro de masas, deberiamos ver la sumatoria de las fuerzas del sistema, para ver en que
+direcci\'on y con que magnitud se esta moviendo. Luego el c\'odigo relevante es:\\
 \newcommand*\justify{%
   \fontdimen2\font=0.4em% interword space
   \fontdimen3\font=0.2em% interword stretch
@@ -50,15 +47,9 @@ Luego el c\'odigo relevante es:\\
   \fontdimen7\font=0.1em% extra space
   \hyphenchar\font=`\-% allowing hyphenation
 }
-\texttt{\justify{REAL velocity =  (( (L*center\_of\_mass) - reduce(u\_old.begin()+1,u\_old.end()-1,0.0) 
-                                 ) / L  
-                                 ) /Dt;  
+\texttt{\justify{REAL velocity = reduce(Ftot\_it0, Ftot\_it1, (REAL(0.0)))/((REAL)L);
                              }}\\
-Con esto obtenemos el delta posicion arriba, y primero lo dividimos por la cantidad de elementos para obtener el promedio de los
-delta por punto, y luego lo dividimos otra vez por el delta tiempo para obtener la tasa de variacion de la posicion en funcion
-de un step de tiempo, es decir, la derivada de la posici\'on en funci\'on del tiempo, que es la velocidad del centro de masas.
-
-
+\subsection{Resultados}
  \begin{figure}[H]
  \begin {center}
  \includegraphics[width=\hrwidth]{plots/ej3omp.png}

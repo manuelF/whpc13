@@ -266,7 +266,6 @@ int main(){
 	// loop temporal
 	//functor_fuerza fuerza(0);
 
-	device_vector<REAL> u_old(L+2);
 	for(long n=0;n<TRUN;n++)
 	{
 		// Impone PBC en el "halo"		
@@ -302,11 +301,6 @@ int main(){
 		// u(X,n) += Ftot(X,n) Dt, X=0,...,L-1
 		// Mirar el functor "euler" mas arriba...
 		// Notar: no hace falta zip_iterator, ya que transform si soporta hasta dos secuencias de input
-        if(n%TPROP==0)
-        {
-            u_old=u;
-        }
-
 		t.restart();
 		transform(
 			u_it0,u_it1,Ftot_it0,u_it0, 
@@ -332,12 +326,9 @@ int main(){
                   SUM ( U(n)-U(n-1) ) /  Dt
                */
                
-			   REAL center_of_mass = reduce(u_it0, u_it1, 0.0)/L; // center of mass position
+			   REAL center_of_mass =reduce(u_it0,u_it1,((REAL)0.0)) /((REAL)L); // center of mass position
 
-			   REAL velocity =  (( (L*center_of_mass) -   //Posiciones actuales
-                                reduce(u_old.begin()+1,u_old.end()-1,0.0) //Posiciones anteriores
-                                ) / L   //Obtenemos el Delta posicion promedio por punto
-                                ) /Dt;  //Obtenemos la velocidad
+			   REAL velocity = reduce(Ftot_it0, Ftot_it1, (REAL(0.0)))/((REAL)L);  //velocidad del centro de masas
 
                
 	                  
@@ -352,7 +343,7 @@ int main(){
 			   HINT:
 			   REAL roughness = transform_reduce(...,...,roughtor(center_of_mass),0.0,thrust::plus<REAL>());
 			*/
-			REAL roughness = transform_reduce( u_it0, u_it1 ,roughtor(center_of_mass),0.0,thrust::plus<REAL>())/L;
+			REAL roughness = transform_reduce( u_it0, u_it1 ,roughtor(center_of_mass),0.0,thrust::plus<REAL>())/((REAL)L);
 			timer_props_elapsed+=t.elapsed();
 	
 
