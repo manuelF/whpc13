@@ -48,25 +48,31 @@ del plan.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   \begin{figure}[H]
  \begin {center}
- \includegraphics[width=\hrwidth]{plots/ej1omp.png}
+ \includegraphics[width=\hrwidth]{plots/ej2omp.png}
  \end {center}
- \caption{Runtime del ej2 en Thrust con OMP, en funcion de la cantidad de threads, para una longitud de vectores $L=10^8$}
+ \caption{Runtime del ej2 en Thrust con OMP, en funcion de la cantidad de threads, para una longitud de vectores $L=4194304=2^{22}$}
  \label{fig:ej1OMP}
  \end{figure}
 
 \begin{table}
     \begin{tabular}{l|r|r}
         \textbf{M\'etodo} & \textbf{ Runtime Real 2 Complex [ms] } & \textbf{  Runtime Complex 2 Real [ms] } \\ \hline
-        1 OMP Thread         & 200.598     & \\
-        2 OMP Thread          & 200.963      &\\
-        4 OMP Thread          & 199.766      &\\
-        8 OMP Thread  & 202.534      &      \\
-        16 OMP Thread & 201.127      &  \\
-        CUDA M2090 & 11.035          &
+         1 OMP Thread        & 60.4782 & 39.7126\\
+         2 OMP Thread        & 87.8408 & 37.5083\\
+         4 OMP Thread        & 42.7415 & 42.1839\\
+         8 OMP Thread        & 51.9118 & 35.1288\\
+         16 OMP Thread       & 33.9507 & 45.8493\\
+         CUDA M2090          & 2.810     & 2.860 
+        
     \end{tabular}
 \end{table}
 
-Los resultados muestran claramente que el calculo de FFT es un problema que paraleliza muy bien. En efecto,
-es de crucial interes esto porque este algoritmo aparece en muchisimas ramas de la ciencia. Podemos apreciar
-tambien que la libreria CUFFT es notablemente buena, siendo varias veces m\'as eficiente que las versiones
-de CPU. 
+Los resultados muestran que el calculo de FFT es un problema que paraleliza bien. En efecto,
+es de crucial interes esto porque este algoritmo aparece en muchisimas ramas de la ciencia. Lamentablemente, en su version CPU,
+no escala linealmente el problema y es notable como el algoritmo R2C escala pero el algoritmo inverso C2R en realidad empeora.
+Esto puede deberse a que para poder hacer la transformaci\'on C2R que usamos fue para que no que destruyera la informaci\'on original.
+
+Dicho esto, la libreria CUFFT sobrepasa totalmente la versi\'on CPU. La intensidad aritmetica y el tama\~no de los vectores usados
+hacen que sea excelente el uso de placas GPGPU para resolver estos problemas. Estas placas se concibieron para hacer procesamiento
+de imagenes, por lo que no es de extra\~nar que esten optimizadas para resolver FFT, al estas aparecer en casi todos los
+filtros y postprocesamientos existentes.
